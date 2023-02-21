@@ -1,17 +1,17 @@
-- name: Checkout
-  uses: actions/checkout@v3
-  with:
-    fetch-depth: 0
+name: gitleaks
 
-- name: Run Gitleaks
-  id: gitleaks
-  uses: DariuszPorowski/github-action-gitleaks@v2
-  with:
-    config: "MyGitleaksConfigs/MyGitleaksConfig.toml"
+on: [push,pull_request]
 
-- name: Upload Gitleaks JSON report to artifacts
-  uses: actions/upload-artifact@v3
-  if: failure()
-  with:
-    name: gitleaks
-    path: ${{ steps.gitleaks.outputs.report }}
+jobs:
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: '1'
+    - name: wget
+      uses: wei/wget@v1
+      with:
+        args: -O .gitleaks.toml https://raw.githubusercontent.com/ycjcl868/gitleaks/master/.gitleaks.toml
+    - name: gitleaks-action
+      uses: zricethezav/gitleaks-action@master
